@@ -70,7 +70,7 @@ function PowerSet(set){
 	});
 	Object.defineProperty(this, Symbol.iterator, {
 		value: function* (){
-			const max = parseInt(Array(elements.length).fill(1).join(''), 2);
+			const max = Math.pow(2, elements.length);
 			for(let i=0; i<=max; ++i){
 				const subset = [];
 				for(let off=0; off<elements.length; ++off){
@@ -87,7 +87,7 @@ function PowerSet(set){
 }
 
 let testCounter = 0;
-let test = Array.from(Array(32), i => ++testCounter);
+let test = Array.from(Array(29), i => ++testCounter);
 let start, end;
 
 const ps = new PowerSet(test);
