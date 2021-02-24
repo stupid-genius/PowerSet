@@ -89,11 +89,12 @@ public class PowerSet<T> implements Set<T>, Iterable<T>, Iterator<Set<T>>{
 		elements.clear();
 	}
 
-	public void reset(){
+	public PowerSet powersetIterator(){
 		cur = 0;
 		max = (long) Math.pow(2, elements.size());
 		maxOff = elements.size();
 		subset = new HashSet<T>();
+		return this;
 	}
 
 	@Override
@@ -117,10 +118,10 @@ public class PowerSet<T> implements Set<T>, Iterable<T>, Iterator<Set<T>>{
 	public static void main(String[] args){
 		System.out.println("PowerSet demo");
 		ArrayList<Integer> test = new ArrayList<>();
-		IntStream.range(1, 32).forEach(test::add);
+		IntStream.range(1, 30).forEach(test::add);
 		PowerSet<Integer> ps = new PowerSet<>(test);
 
-		ps.reset();
+		ps.powersetIterator();
 		Set<Integer> sub;
 		long start = System.nanoTime();
 		while(ps.hasNext()){
