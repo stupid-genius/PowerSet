@@ -14,6 +14,7 @@ function BigBitSet(length = 0){
 		if(bitIndex < 0 || bitIndex >= length){
 			throw new RangeError('Index out of range');
 		}
+
         const i = bitIndex >> 5;
 		const mask = 1 << (bitIndex & 31);
 		if(bitValue){
@@ -32,14 +33,34 @@ function BigBitSet(length = 0){
     }
 
     Object.defineProperties(this, {
-        set: {
-            enumerable: true,
-            value: setBit
-        },
+		add: {
+			enumerable: true,
+			// Set bits from a provided int
+			// to allow for bitsets larger than 32 bits
+			// we need to iterate through the bits modulo the length
+			value: function(bitSet){
+				if(typeof bitSet !== 'number'){
+					throw new TypeError('bitSet must be a number');
+				}
+				for(let i=0; i<length; ++i){
+					const buf = i >>> 5;
+					const off = i & 31;
+					const word = bitSet >> buf;
+					const mask = 1 << off;
+					if(word & mask){
+						setBit(i, true);
+					}
+				}
+			}
+		},
         get: {
             enumerable: true,
             value: getBit
         },
+        set: {
+            enumerable: true,
+            value: setBit
+        }
     });
 
     Object.defineProperties(this, {
@@ -79,4 +100,43 @@ function BigBitSet(length = 0){
 	// return proxy;
 }
 
-export default BigBitSet;
+/**
+ * BigBitBitmap
+ *
+ * A bitmap implementation based on BigBitSet.
+ * Accepts values and maps the sparse ids to dense indexes into the bitset.
+ */
+function BigBitBitmap(length = 0){
+	if(!new.target){
+		return new BigBitBitmap(length);
+	}
+
+	const bitset = new BigBitSet(length);
+
+	Object.defineProperties(this, {
+		set: {
+			enumerable: true,
+			value: bitset.set
+		},
+		get: {
+			enumerable: true,
+			value: bitset.get
+		},
+		length: {
+			value: length
+		}
+	});
+
+	Object.defineProperties(this, {
+		[Symbol.iterator]: {
+			value: bitset[Symbol.iterator]
+		}
+	});
+
+	return bitset;
+}
+
+module.exports = {
+	BigBitSet,
+	BigBitBitmap
+};

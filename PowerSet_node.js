@@ -1,7 +1,8 @@
-const { default: Logger } = require('log-ng');
-const { default: BigBitSet } = require('./BigBitSet.js');
+const Logger = require('log-ng');
+const path = require('path');
+const { BigBitSet } = require('./BigBitSet_node.js');
 
-const logger = new Logger('PowerSet.js');
+const logger = new Logger(path.basename(__filename));
 
 /**
  * PowerSet class that generates all subsets of a given set.
@@ -114,7 +115,7 @@ function PowerSet(set){
 	Object.defineProperty(this, Symbol.iterator, {
 		value: function* (){
 			const max = Math.pow(2, elements.length) - 1;
-			const bitSet = BigBitSet(elements.length);
+			const bitSet = new BigBitSet(elements.length);
 			for(let i = 0; i <= max; ++i){
 				for(let bit = 0; bit < elements.length; ++bit){
 					bitSet.set(bit, (i & (1 << bit)) !== 0);
@@ -126,4 +127,4 @@ function PowerSet(set){
 	});
 }
 
-export default PowerSet;
+module.exports = PowerSet;
